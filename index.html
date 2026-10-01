@@ -5,10 +5,10 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
   <meta name="theme-color" content="#ff9ec5">
   <meta name="description" content="Bhargavi's interactive makeup and dress-up doll game">
-  <link rel="manifest" href="/manifest.webmanifest?v=6">
+  <link rel="manifest" href="/manifest.webmanifest?v=7">
   <link rel="icon" href="/icon.svg" type="image/svg+xml">
   <title>Bhargavi's Makeup Doll</title>
-  <link rel="stylesheet" href="/styles.css?v=6">
+  <link rel="stylesheet" href="/styles.css?v=7">
 </head>
 <body>
 <div id="startScreen" class="start-screen">
@@ -18,7 +18,7 @@
     <div class="princess">👸</div>
     <button id="playBtn" class="play-btn" onclick="document.getElementById('startScreen').style.display='none'">▶ PLAY</button>
     <button id="installBtnStart" class="install-btn" onclick="window.__installFallback&&window.__installFallback()">📲 Install App</button>
-    <p>Drag • Apply • Dress • Spin</p><small style="display:block;margin-top:6px;font-weight:900;color:#c45888">V6</small>
+    <p>Drag • Apply • Dress • Spin</p><small style="display:block;margin-top:6px;font-weight:900;color:#c45888">V7</small>
   </div>
 </div>
 
@@ -44,8 +44,12 @@
             <path id="shadowR" d="M193 153Q211 143 230 153" stroke="#f1a2c8" stroke-width="12" stroke-linecap="round" opacity="0" fill="none"/>
             <ellipse id="blushL" cx="128" cy="203" rx="22" ry="13" fill="#ff8fa5" opacity="0"/>
             <ellipse id="blushR" cx="232" cy="203" rx="22" ry="13" fill="#ff8fa5" opacity="0"/>
+            <defs>
+              <clipPath id="lipClip"><path d="M154 225Q180 208 206 225Q180 249 154 225Z"/></clipPath>
+            </defs>
             <path id="mouthInner" d="M158 226Q180 218 202 226Q180 239 158 226Z" fill="#7c3048" opacity="0"/>
             <path id="lips" d="M154 225Q180 208 206 225Q180 249 154 225Z" fill="#d98aa3"/>
+            <g id="lipPaint" clip-path="url(#lipClip)"></g>
             <path id="lipLine" d="M155 225Q180 233 205 225" stroke="#9b556e" stroke-width="1.5" fill="none" opacity=".55"/>
             <path d="M148 270L212 270L219 316L141 316Z" fill="#ffd5bb"/>
             <path id="dressF" d="M119 305Q180 270 241 305L267 500Q180 542 93 500Z" fill="#ff75a5"/>
@@ -136,6 +140,6 @@ window.__installFallback=function(){
   if(m) m.classList.remove('hidden');
 };
 </script>
-<script src="/app.js?v=6"></script>
+<script src="/app.js?v=7"></script>
 </body>
 </html>
