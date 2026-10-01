@@ -1,0 +1,33 @@
+{
+  "production_url": "https://bhargavi-makeup-doll-v1.vercel.app/",
+  "tested_date": "2026-10-01",
+  "game_commit": "b03c87bc0e0a9f771a2bcd7d60f3934125183cf7",
+  "profiles": [
+    "1100x900 desktop",
+    "360x800 Chromium touch emulation"
+  ],
+  "passed": [
+    "Requested 20-step regression on both profiles",
+    "All makeup tools and shade buttons",
+    "Accumulating local lipstick clipped to lips",
+    "Independent translucent cheek and eyelid paint",
+    "All dress, hair and accessory drop targets",
+    "All five foods including repeated lollipop licking",
+    "Invalid dress, earring and food drops rejected",
+    "Pointer cancellation and second-finger tab recovery",
+    "Rotation followed by makeup",
+    "Reset and repeated tab switching",
+    "Sound toggle, keyboard controls and celebration",
+    "Install fallback and manifest icons",
+    "Chrome PWA installability: zero errors",
+    "Network-first offline shell and offline reload",
+    "No horizontal overflow",
+    "Production upgrade from previously loaded v8 to v9"
+  ],
+  "javascript_console_errors": [],
+  "limitations": [
+    "Physical Android device installation was not performed",
+    "Audio playback was exercised but not audibly judged",
+    "Rotation uses front/profile/back SVG sprites, not true 3D"
+  ]
+}
