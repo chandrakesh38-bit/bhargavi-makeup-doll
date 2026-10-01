@@ -1,117 +1,127 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no" />
-  <meta name="theme-color" content="#ff9ec5" />
-  <meta name="description" content="Bhargavi's Makeup Doll - a child-friendly makeup and dress-up game." />
-  <link rel="manifest" href="/manifest.webmanifest" />
-  <link rel="icon" href="/icon.svg" type="image/svg+xml" />
-  <link rel="apple-touch-icon" href="/icon.svg" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+  <meta name="theme-color" content="#ff9ec5">
+  <meta name="description" content="Bhargavi's interactive makeup and dress-up doll game">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="icon" href="/icon.svg" type="image/svg+xml">
   <title>Bhargavi's Makeup Doll</title>
-  <link rel="stylesheet" href="/styles.css" />
+  <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
-  <div id="startScreen" class="start-screen">
-    <div class="start-card">
-      <div class="start-stars">✨ 💖 ✨</div>
-      <h1>Bhargavi's<br><span>Makeup Doll</span></h1>
-      <div class="mini-doll">👸</div>
-      <button id="playBtn" class="play-btn">▶ PLAY</button>
-      <button id="installBtnStart" class="install-btn">📲 Install App</button>
-      <p>Makeup • Dress • Hair • Pretty Accessories</p>
-    </div>
+<div id="startScreen" class="start-screen">
+  <div class="start-card">
+    <div class="spark-title">✨ 💖 ✨</div>
+    <h1>Bhargavi's<br><span>Makeup Doll</span></h1>
+    <div class="princess">👸</div>
+    <button id="playBtn" class="play-btn">▶ PLAY</button>
+    <button id="installBtnStart" class="install-btn">📲 Install App</button>
+    <p>Drag • Apply • Dress • Spin</p>
   </div>
+</div>
 
-  <main class="app" aria-label="Bhargavi's Makeup Doll game">
-    <header class="topbar">
-      <div>
-        <div class="eyebrow">✨ BHARGAVI'S</div>
-        <h1>Makeup Doll</h1>
-      </div>
-      <div class="top-actions">
-        <button id="installBtn" class="round-btn" aria-label="Install app">📲</button>
-        <button id="soundBtn" class="round-btn" aria-label="Sound on">🔊</button>
-      </div>
-    </header>
+<main class="app">
+  <header class="topbar">
+    <div><small>✨ BHARGAVI'S</small><h1>Makeup Doll</h1></div>
+    <div class="top-actions"><button id="installBtn" class="icon-btn">📲</button><button id="soundBtn" class="icon-btn">🔊</button></div>
+  </header>
 
-    <section class="stage" id="stage">
-      <div class="sparkles" id="sparkles" aria-hidden="true"></div>
-      <div class="doll-wrap" id="dollWrap">
-        <svg id="doll" viewBox="0 0 340 560" role="img" aria-label="Makeup doll">
-          <defs>
-            <linearGradient id="dressGrad" x1="0" x2="1">
-              <stop offset="0" stop-color="#ff7faf"/><stop offset="1" stop-color="#ffbfd5"/>
-            </linearGradient>
-          </defs>
-          <ellipse cx="170" cy="535" rx="98" ry="15" fill="#000" opacity=".08"/>
-          <path id="backHair" d="M87 155 Q76 72 170 58 Q264 72 253 155 L250 257 Q215 285 170 280 Q125 285 90 257Z" fill="#49311f"/>
-          <ellipse cx="170" cy="166" rx="73" ry="84" fill="#ffd5bb"/>
-          <path d="M104 166 Q105 80 170 80 Q235 80 236 166 Q223 109 170 108 Q117 109 104 166" fill="#49311f"/>
-          <path id="frontHair" d="M104 135 Q110 78 170 78 Q226 80 236 136 Q210 116 188 110 Q160 130 104 135Z" fill="#49311f"/>
-          <ellipse cx="141" cy="163" rx="8" ry="6" fill="#3d2d2b"/>
-          <ellipse cx="199" cy="163" rx="8" ry="6" fill="#3d2d2b"/>
-          <path id="eyeShadowL" d="M128 153 Q141 145 154 153" stroke="#f4a0c8" stroke-width="7" stroke-linecap="round" opacity=".65" fill="none"/>
-          <path id="eyeShadowR" d="M186 153 Q199 145 212 153" stroke="#f4a0c8" stroke-width="7" stroke-linecap="round" opacity=".65" fill="none"/>
-          <ellipse id="blushL" cx="126" cy="192" rx="16" ry="9" fill="#ff91a8" opacity=".35"/>
-          <ellipse id="blushR" cx="214" cy="192" rx="16" ry="9" fill="#ff91a8" opacity=".35"/>
-          <path id="lips" d="M149 211 Q170 197 191 211 Q170 230 149 211Z" fill="#ec5579"/>
-          <path d="M150 211 Q170 218 190 211" stroke="#a73855" stroke-width="1.5" fill="none" opacity=".6"/>
-          <path d="M144 250 L196 250 L205 295 L135 295Z" fill="#ffd5bb"/>
-          <path id="dress" d="M118 280 Q170 252 222 280 L247 472 Q170 510 93 472Z" fill="url(#dressGrad)"/>
-          <path id="dressTop" d="M119 280 Q170 310 221 280 L212 360 Q170 380 128 360Z" fill="#ff6f9e" opacity=".6"/>
-          <path d="M119 296 Q92 320 81 386" stroke="#ffd5bb" stroke-width="24" stroke-linecap="round"/>
-          <path d="M221 296 Q248 320 259 386" stroke="#ffd5bb" stroke-width="24" stroke-linecap="round"/>
-          <circle cx="79" cy="392" r="13" fill="#ffd5bb"/><circle cx="261" cy="392" r="13" fill="#ffd5bb"/>
-          <path d="M132 470 L122 530" stroke="#ffd5bb" stroke-width="25" stroke-linecap="round"/>
-          <path d="M208 470 L218 530" stroke="#ffd5bb" stroke-width="25" stroke-linecap="round"/>
-          <path id="shoeL" d="M102 526 Q126 519 142 531 L137 544 L101 544Z" fill="#8b62c9"/>
-          <path id="shoeR" d="M198 531 Q214 519 238 526 L239 544 L203 544Z" fill="#8b62c9"/>
-          <g id="crown" opacity="0"><path d="M128 82 L142 46 L162 70 L178 42 L198 69 L216 47 L224 84Z" fill="#ffd760" stroke="#f2ad2f" stroke-width="4"/><circle cx="178" cy="55" r="5" fill="#ff6aa6"/></g>
-          <g id="necklace" opacity="0"><path d="M139 272 Q170 300 201 272" stroke="#ffd85c" stroke-width="5" fill="none"/><circle cx="170" cy="291" r="9" fill="#ff6ca6"/></g>
-          <g id="earrings" opacity="0" fill="#ffd85c"><circle cx="101" cy="184" r="5"/><circle cx="239" cy="184" r="5"/><circle cx="101" cy="196" r="6"/><circle cx="239" cy="196" r="6"/></g>
-        </svg>
+  <section class="stage" id="stage">
+    <div class="hint" id="spinHint">↔ Hold doll & drag to rotate 360°</div>
+    <div class="doll-scene" id="dollScene">
+      <div class="doll-3d" id="doll3d">
+        <div class="doll-face front">
+          <svg id="frontSvg" viewBox="0 0 360 590" aria-label="Doll front view">
+            <ellipse cx="180" cy="565" rx="108" ry="14" fill="#000" opacity=".08"/>
+            <path id="hairBackF" d="M84 155Q72 60 180 48Q288 60 276 155L270 280Q225 310 180 302Q135 310 90 280Z" fill="#513521"/>
+            <ellipse cx="180" cy="172" rx="78" ry="92" fill="#ffd5bb"/>
+            <path id="hairFrontF" d="M103 142Q111 69 180 67Q249 69 257 142Q225 115 199 108Q168 133 103 142Z" fill="#513521"/>
+            <path id="eyeL" d="M131 164Q149 151 166 164" stroke="#4b3437" stroke-width="5" stroke-linecap="round" fill="none"/>
+            <path id="eyeR" d="M194 164Q211 151 229 164" stroke="#4b3437" stroke-width="5" stroke-linecap="round" fill="none"/>
+            <path id="shadowL" d="M130 153Q149 143 167 153" stroke="#f1a2c8" stroke-width="12" stroke-linecap="round" opacity="0" fill="none"/>
+            <path id="shadowR" d="M193 153Q211 143 230 153" stroke="#f1a2c8" stroke-width="12" stroke-linecap="round" opacity="0" fill="none"/>
+            <ellipse id="blushL" cx="128" cy="203" rx="22" ry="13" fill="#ff8fa5" opacity="0"/>
+            <ellipse id="blushR" cx="232" cy="203" rx="22" ry="13" fill="#ff8fa5" opacity="0"/>
+            <path id="lips" d="M154 225Q180 208 206 225Q180 249 154 225Z" fill="#d98aa3"/>
+            <path d="M155 225Q180 233 205 225" stroke="#9b556e" stroke-width="1.5" fill="none" opacity=".55"/>
+            <path d="M148 270L212 270L219 316L141 316Z" fill="#ffd5bb"/>
+            <path id="dressF" d="M119 305Q180 270 241 305L267 500Q180 542 93 500Z" fill="#ff75a5"/>
+            <path id="dressTopF" d="M121 305Q180 340 239 305L229 389Q180 410 131 389Z" fill="#ff5c99" opacity=".62"/>
+            <path d="M120 324Q91 349 79 427" stroke="#ffd5bb" stroke-width="26" stroke-linecap="round"/>
+            <path d="M240 324Q269 349 281 427" stroke="#ffd5bb" stroke-width="26" stroke-linecap="round"/>
+            <circle cx="77" cy="433" r="14" fill="#ffd5bb"/><circle cx="283" cy="433" r="14" fill="#ffd5bb"/>
+            <path d="M140 497L129 557" stroke="#ffd5bb" stroke-width="27" stroke-linecap="round"/>
+            <path d="M220 497L231 557" stroke="#ffd5bb" stroke-width="27" stroke-linecap="round"/>
+            <path id="shoeLF" d="M106 551Q132 542 149 555L144 569L105 569Z" fill="#8b62c9"/>
+            <path id="shoeRF" d="M211 555Q228 542 254 551L255 569L216 569Z" fill="#8b62c9"/>
+            <g id="crownF" opacity="0"><path d="M135 86L150 43L174 71L193 39L216 70L239 45L247 89Z" fill="#ffd760" stroke="#f1ad2f" stroke-width="4"/></g>
+            <g id="necklaceF" opacity="0"><path d="M146 292Q180 321 214 292" stroke="#ffd85c" stroke-width="6" fill="none"/><circle cx="180" cy="313" r="9" fill="#ff6ca6"/></g>
+            <g id="earringsF" opacity="0" fill="#ffd85c"><circle cx="101" cy="190" r="6"/><circle cx="259" cy="190" r="6"/><circle cx="101" cy="204" r="7"/><circle cx="259" cy="204" r="7"/></g>
+          </svg>
+        </div>
+        <div class="doll-face back">
+          <svg viewBox="0 0 360 590" aria-label="Doll back view">
+            <ellipse cx="180" cy="565" rx="108" ry="14" fill="#000" opacity=".08"/>
+            <path id="hairBackB" d="M84 155Q72 60 180 48Q288 60 276 155L270 290Q225 325 180 318Q135 325 90 290Z" fill="#513521"/>
+            <path d="M145 267L215 267L222 318L138 318Z" fill="#ffd5bb"/>
+            <path id="dressB" d="M119 305Q180 277 241 305L267 500Q180 542 93 500Z" fill="#ff75a5"/>
+            <path d="M120 324Q91 349 79 427" stroke="#ffd5bb" stroke-width="26" stroke-linecap="round"/>
+            <path d="M240 324Q269 349 281 427" stroke="#ffd5bb" stroke-width="26" stroke-linecap="round"/>
+            <circle cx="77" cy="433" r="14" fill="#ffd5bb"/><circle cx="283" cy="433" r="14" fill="#ffd5bb"/>
+            <path d="M140 497L129 557" stroke="#ffd5bb" stroke-width="27" stroke-linecap="round"/>
+            <path d="M220 497L231 557" stroke="#ffd5bb" stroke-width="27" stroke-linecap="round"/>
+            <path d="M106 551Q132 542 149 555L144 569L105 569Z" fill="#8b62c9"/>
+            <path d="M211 555Q228 542 254 551L255 569L216 569Z" fill="#8b62c9"/>
+          </svg>
+        </div>
       </div>
-      <div class="ready-bubble" id="readyBubble">Beautiful! ✨</div>
-    </section>
-
-    <section class="controls">
-      <nav class="tabs" aria-label="Makeup categories">
-        <button class="tab active" data-tab="makeup"><b>💄</b><span>Makeup</span></button>
-        <button class="tab" data-tab="dress"><b>👗</b><span>Dress</span></button>
-        <button class="tab" data-tab="hair"><b>💇‍♀️</b><span>Hair</span></button>
-        <button class="tab" data-tab="accessory"><b>👑</b><span>Pretty</span></button>
-      </nav>
-
-      <div class="panel active" id="panel-makeup">
-        <div class="option-group"><strong>💋 Lipstick</strong><div class="swatches" id="lipColors"></div></div>
-        <div class="option-group"><strong>😊 Blush</strong><div class="swatches" id="blushColors"></div></div>
-        <div class="option-group"><strong>👁️ Eye Shadow</strong><div class="swatches" id="eyeColors"></div></div>
-      </div>
-      <div class="panel" id="panel-dress"><div class="big-options" id="dressOptions"></div></div>
-      <div class="panel" id="panel-hair">
-        <div class="option-group"><strong>🎨 Hair Color</strong><div class="swatches" id="hairColors"></div></div>
-        <div class="big-options" id="hairStyles"></div>
-      </div>
-      <div class="panel" id="panel-accessory"><div class="big-options" id="accessoryOptions"></div></div>
-
-      <div class="actions">
-        <button id="resetBtn" class="secondary">↩ Reset</button>
-        <button id="readyBtn" class="primary">✨ Doll Ready!</button>
-      </div>
-    </section>
-  </main>
-
-  <div id="installHelp" class="modal hidden" role="dialog" aria-modal="true">
-    <div class="modal-card">
-      <div class="modal-icon">📲</div>
-      <h2>Install Bhargavi's Game</h2>
-      <p id="installHelpText">Chrome menu ⋮ → <b>Add to Home screen</b> → Install</p>
-      <button id="closeInstallHelp" class="primary modal-close">Got it 👍</button>
     </div>
-  </div>
+    <div id="dragGhost" class="drag-ghost hidden"></div>
+    <div id="dropMessage" class="drop-message">Drag it onto the doll ✨</div>
+  </section>
 
-  <script src="/app.js"></script>
-<!-- deploy-trigger: 2026-10-01-v2 -->
+  <section class="controls">
+    <nav class="tabs">
+      <button class="tab active" data-tab="makeup">💄<span>Makeup</span></button>
+      <button class="tab" data-tab="dress">👗<span>Dress</span></button>
+      <button class="tab" data-tab="hair">💇‍♀️<span>Hair</span></button>
+      <button class="tab" data-tab="pretty">👑<span>Pretty</span></button>
+    </nav>
+
+    <div class="panel active" id="panel-makeup">
+      <div class="makeup-row">
+        <button class="tool-card" data-drag-type="makeup" data-tool="lipstick"><span>💄</span><b>Lipstick</b><small>Drag to lips</small></button>
+        <button class="tool-card" data-drag-type="makeup" data-tool="blush"><span>🖌️</span><b>Blush Brush</b><small>Brush cheeks</small></button>
+        <button class="tool-card" data-drag-type="makeup" data-tool="shadow"><span>🪄</span><b>Eye Brush</b><small>Brush eyes</small></button>
+      </div>
+      <div class="shade-title">Choose shade</div>
+      <div class="shade-strip" id="makeupShades"></div>
+    </div>
+
+    <div class="panel" id="panel-dress">
+      <div class="section-title">Drag a dress onto her 👗</div>
+      <div class="item-strip" id="dressStrip"></div>
+    </div>
+
+    <div class="panel" id="panel-hair">
+      <div class="section-title">Drag a hairstyle onto her head 💇‍♀️</div>
+      <div class="item-strip" id="hairStrip"></div>
+      <div class="shade-title">Hair colour</div>
+      <div class="shade-strip" id="hairShades"></div>
+    </div>
+
+    <div class="panel" id="panel-pretty">
+      <div class="section-title">Drag accessories to the correct place ✨</div>
+      <div class="item-strip" id="prettyStrip"></div>
+    </div>
+
+    <div class="actions"><button id="resetBtn">↩ Reset</button><button id="readyBtn">✨ Doll Ready!</button></div>
+  </section>
+</main>
+
+<div id="installHelp" class="modal hidden"><div class="modal-card"><div>📲</div><h2>Install Game</h2><p id="installHelpText">Chrome menu ⋮ → Add to Home screen → Install</p><button id="closeInstallHelp">Got it 👍</button></div></div>
+<script src="/app.js"></script>
 </body>
 </html>
