@@ -1,0 +1,15 @@
+{
+  "id":"/",
+  "name":"Bhargavi's Makeup Doll",
+  "short_name":"Bhargavi Doll",
+  "start_url":"/",
+  "scope":"/",
+  "display":"standalone",
+  "orientation":"portrait",
+  "background_color":"#fff0f7",
+  "theme_color":"#ff9ec5",
+  "description":"A child-friendly makeup and dress-up doll game.",
+  "icons":[
+    {"src":"/icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}
+  ]
+}
