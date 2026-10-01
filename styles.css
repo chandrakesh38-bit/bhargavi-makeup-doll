@@ -9,7 +9,7 @@ button:focus-visible{outline:3px solid #6842ad;outline-offset:3px}
 .topbar{display:flex;justify-content:space-between;align-items:center;padding:3px}
 .topbar small{font-weight:900;color:#c84f82}.topbar h1{font-size:1.45rem;margin:0}
 .top-actions{display:flex;gap:8px}.icon-btn{width:50px;height:50px;border-radius:17px;background:#fff;font-size:1.3rem;box-shadow:0 5px 16px #8b52752c}
-.stage{position:relative;height:49dvh;min-height:330px;max-height:520px;border:3px solid #fff;border-radius:28px;background:radial-gradient(circle at 50% 22%,#fff 0 15%,#ffe2ef 49%,#e4dbff 100%);box-shadow:0 10px 28px #8e5b7b24;overflow:hidden}
+.stage{position:relative;height:40dvh;min-height:300px;max-height:480px;border:3px solid #fff;border-radius:28px;background:radial-gradient(circle at 50% 22%,#fff 0 15%,#ffe2ef 49%,#e4dbff 100%);box-shadow:0 10px 28px #8e5b7b24;overflow:hidden}
 .hint{position:absolute;z-index:5;left:50%;top:8px;transform:translateX(-50%);background:#ffffffde;border-radius:999px;padding:6px 11px;font-size:.72rem;font-weight:900;color:#9a5f7d;white-space:nowrap;max-width:96%;pointer-events:none}
 .doll-scene{position:absolute;inset:35px 0 5px;display:grid;place-items:center;touch-action:none}
 .doll-3d{width:100%;max-width:330px;height:100%;position:relative}
@@ -48,6 +48,8 @@ button:focus-visible{outline:3px solid #6842ad;outline-offset:3px}
 .play-btn,.install-btn{width:100%;border-radius:22px;min-height:66px;font-weight:900;font-size:1.2rem;margin-top:10px}.play-btn{background:linear-gradient(135deg,#ff5f9f,#8c6bd1);color:#fff}.install-btn{background:#fff;color:#8c4f70;border:2px solid #f2cadd}
 .start-card p{font-weight:850;font-size:.84rem;color:#91677d}.start-card small{font-size:.65rem}
 .modal{position:fixed;inset:0;z-index:140;background:#4f314766;display:grid;place-items:center;padding:22px}.modal-card{width:min(92vw,390px);background:#fff;border-radius:28px;padding:24px;text-align:center}.modal-card>div{font-size:3rem}.modal-card p{line-height:1.6}.modal-card button{border-radius:18px;min-height:52px;width:100%;font-weight:900;background:linear-gradient(135deg,#ff5b9b,#916bd1);color:#fff}
-@media(max-height:760px){.stage{height:44dvh;min-height:290px}.app{gap:6px}.panel{min-height:150px}.drag-item{height:82px}.tool-card{min-height:78px}.tab{min-height:60px}.topbar h1{font-size:1.2rem}}
-@media(min-width:700px){.app{max-width:620px}.stage{height:51dvh}.shade{height:48px;width:48px}.drag-item b{font-size:.78rem}}
+@media(max-height:760px){.stage{height:38dvh;min-height:270px}.app{gap:6px}.panel{min-height:150px}.drag-item{height:82px}.tool-card{min-height:78px}.tab{min-height:60px}.topbar h1{font-size:1.2rem}}
+@media(min-width:700px){.app{max-width:620px}.stage{height:47dvh}.shade{height:48px;width:48px}.drag-item b{font-size:.78rem}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+
+.doll-picker{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;flex-shrink:0}.doll-card{min-width:0;min-height:72px;padding:3px 2px 5px;border:2px solid #efd8e4;border-radius:18px;background:#fff9fc;color:#80576d;touch-action:manipulation}.doll-card svg{display:block;width:100%;height:44px;pointer-events:none}.doll-card span{font-size:.7rem;font-weight:900;display:block}.doll-card.selected{border-color:#e85f99;background:#ffe2ef;box-shadow:0 0 0 2px #ff9cc638}.doll-card.selected span::after{content:' ✓';color:#bc3473}

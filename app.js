@@ -3,7 +3,7 @@
 const $ = s => document.querySelector(s);
 const $$ = s => [...document.querySelectorAll(s)];
 const SVG_NS = 'http://www.w3.org/2000/svg';
-const state = { tab:'makeup', tool:'lipstick', shade:'#d92d59', hair:'#513521', hairStyle:0, dress:'#ff75a5', crown:false, necklace:false, earrings:false, rotation:0, sound:true };
+const state = { doll:'bhargavi', tab:'makeup', tool:'lipstick', shade:'#d92d59', hair:'#513521', hairStyle:0, dress:'#ff75a5', crown:false, necklace:false, earrings:false, rotation:0, sound:true };
 let gesture = { mode:'idle' };
 let audioContext, installPrompt, lickTimer, chewTimer, soundTime = 0;
 const scene = $('#dollScene');
@@ -13,6 +13,51 @@ const hairPaths = [
  ['M101 146Q111 75 180 72Q247 75 259 146Q226 111 180 116Q135 112 101 146Z','M92 157Q79 77 180 58Q281 77 268 157L252 250Q220 271 180 270Q140 271 108 250Z'],
  ['M103 142Q111 69 180 67Q249 69 257 142Q225 115 199 108Q168 133 103 142Z','M82 158Q70 58 180 47Q290 58 278 158L293 340Q236 366 180 348Q124 366 67 340Z']
 ];
+// Stable face coordinates keep every doll compatible with the same forgiving touch targets.
+const dolls = [
+ {id:'bhargavi',name:'Bhargavi',skin:'#ffd5bb',hair:'#513521',hairStyle:0,dress:'#ff75a5',faceWidth:78,eyes:'smile',lip:'#d98aa3'},
+ {id:'tara',name:'Tara',skin:'#c78a65',hair:'#211b1a',hairStyle:1,dress:'#62a9ec',faceWidth:73,eyes:'almond',lip:'#b96580'},
+ {id:'meera',name:'Meera',skin:'#915c44',hair:'#513521',hairStyle:2,dress:'#9a70dc',faceWidth:82,eyes:'smile',lip:'#c77890'},
+ {id:'pari',name:'Pari',skin:'#efbd87',hair:'#854727',hairStyle:1,dress:'#64c4b3',faceWidth:76,eyes:'round',lip:'#d57d94'}
+];
+const looks = new Map();
+const lookKeys = ['hair','hairStyle','dress','crown','necklace','earrings'];
+const paintLayers = ['lipPaint','blushPaint','shadowPaint'];
+function dollDefaults(doll) { return {hair:doll.hair,hairStyle:doll.hairStyle,dress:doll.dress,crown:false,necklace:false,earrings:false}; }
+function eyeArt(doll) {
+ if(doll.eyes==='smile') return {left:'M131 164Q149 151 166 164',right:'M194 164Q211 151 229 164',fill:'none',detail:''};
+ const paths=doll.eyes==='almond'?['M130 164Q149 149 167 164Q149 178 130 164Z','M193 164Q211 149 230 164Q211 178 193 164Z']:['M132 165a16 11 0 1 0 32 0a16 11 0 1 0 -32 0','M196 165a16 11 0 1 0 32 0a16 11 0 1 0 -32 0'];
+ return {left:paths[0],right:paths[1],fill:'#fff9f2',detail:'<circle cx="149" cy="165" r="6" fill="#4b3437"/><circle cx="211" cy="165" r="6" fill="#4b3437"/><circle cx="147" cy="163" r="2" fill="white"/><circle cx="209" cy="163" r="2" fill="white"/>'};
+}
+function faceDetails(doll) {
+ if(doll.id==='pari') return '<g fill="#a56642" opacity=".5"><circle cx="132" cy="193" r="2"/><circle cx="141" cy="196" r="2"/><circle cx="128" cy="199" r="2"/><circle cx="228" cy="193" r="2"/><circle cx="219" cy="196" r="2"/><circle cx="232" cy="199" r="2"/></g>';
+ if(doll.id==='meera') return '<path d="M126 139Q147 127 166 137M194 137Q213 127 234 139" stroke="#513521" stroke-width="4" fill="none" stroke-linecap="round"/>';
+ return '';
+}
+function portrait(doll) {
+ const [fringe,hair]=hairPaths[doll.hairStyle],eye=eyeArt(doll);
+ return `<svg viewBox="60 32 240 245" aria-hidden="true"><path d="${hair}" fill="${doll.hair}"/><ellipse cx="180" cy="172" rx="${doll.faceWidth}" ry="92" fill="${doll.skin}"/><path d="${fringe}" fill="${doll.hair}"/><path d="${eye.left}" stroke="#4b3437" stroke-width="4" fill="${eye.fill}" stroke-linecap="round"/><path d="${eye.right}" stroke="#4b3437" stroke-width="4" fill="${eye.fill}" stroke-linecap="round"/>${eye.detail}${faceDetails(doll)}<path d="M154 225Q180 208 206 225Q180 249 154 225Z" fill="${doll.lip}"/></svg>`;
+}
+function saveLook() {
+ const appearance=Object.fromEntries(lookKeys.map(key=>[key,state[key]]));
+ looks.set(state.doll,{appearance,paint:paintLayers.map(id=>$('#'+id).innerHTML)});
+}
+function syncHairShades() {
+ $$('#hairShades .shade').forEach(button=>{const selected=button.dataset.color===state.hair;button.classList.toggle('selected',selected);button.setAttribute('aria-pressed',selected);});
+}
+function chooseDoll(id) {
+ const doll=dolls.find(d=>d.id===id);if(!doll)return;
+ cancelGesture();stopFeeding();saveLook();state.doll=id;
+ const saved=looks.get(id);Object.assign(state,saved?saved.appearance:dollDefaults(doll));
+ paintLayers.forEach((layer,i)=>$('#'+layer).innerHTML=saved?saved.paint[i]:'');
+ renderAppearance();faceFront();syncHairShades();
+ $$('.doll-card').forEach(button=>{const selected=button.dataset.doll===id;button.classList.toggle('selected',selected);button.setAttribute('aria-pressed',selected);});
+ $('#doll3d').dataset.doll=id;message('Hello, '+doll.name+'! 💖');sound('tap');
+}
+function buildDollPicker() {
+ dolls.forEach(doll=>{const button=document.createElement('button');button.className='doll-card';button.dataset.doll=doll.id;button.setAttribute('aria-label','Choose '+doll.name);button.setAttribute('aria-pressed',doll.id===state.doll);button.classList.toggle('selected',doll.id===state.doll);button.innerHTML=portrait(doll)+`<span>${doll.name}</span>`;activate(button,()=>chooseDoll(doll.id));$('#dollPicker').append(button);});
+ $('#doll3d').dataset.doll=state.doll;
+}
 // Pointer-up is authoritative for touch/mouse. Native click is used only for keyboard/AT.
 // Do not prevent pointer events on controls: they retain normal focus and scrolling.
 function activate(button, action) {
@@ -40,6 +85,12 @@ function message(text) { const el=$('#dropMessage'); el.textContent=text; el.cla
 function sparkle(x,y,emoji='✨') { const el=document.createElement('div'); el.className='paint-spark'; el.textContent=emoji; el.style.left=x+'px'; el.style.top=y+'px'; document.body.append(el); setTimeout(()=>el.remove(),600); }
 function animateDoll() { $('#doll3d').animate([{scale:'.96'},{scale:'1.04'},{scale:'1'}],{duration:350}); }
 function renderAppearance() {
+ const doll=dolls.find(d=>d.id===state.doll),eye=eyeArt(doll);
+ $$('#doll3d [data-skin]').forEach(el=>el.setAttribute(el.dataset.skin,doll.skin));
+ $('#faceShape').setAttribute('rx',doll.faceWidth);
+ ['eyeL','eyeR'].forEach((id,i)=>{const el=$('#'+id);el.setAttribute('d',i?eye.right:eye.left);el.setAttribute('fill',eye.fill);el.setAttribute('stroke-width',doll.eyes==='smile'?5:3);});
+ $('#eyeDetails').innerHTML=eye.detail;$('#faceDetails').innerHTML=faceDetails(doll);$('#lips').setAttribute('fill',doll.lip);
+
  ['hairBackF','hairFrontF','hairBackB','sideHair','sideFringe'].forEach(id=>$('#'+id).setAttribute('fill',state.hair));
  const [front,back]=hairPaths[state.hairStyle]; $('#hairFrontF').setAttribute('d',front);
  ['hairBackF','hairBackB'].forEach(id=>$('#'+id).setAttribute('d',back));
@@ -178,7 +229,7 @@ $$('.tool-card').forEach(el=>activate(el,()=>{
  $$('.tool-card').forEach(t=>{const selected=t===el;t.classList.toggle('selected',selected);t.setAttribute('aria-pressed',selected);}); hint(); sound('tap');
 }));
 function shades(selector,colors,choose,prefix) {
- colors.forEach((color,i)=>{const b=document.createElement('button');b.className='shade'+(!i?' selected':'');b.style.background=color;b.setAttribute('aria-label',prefix+' shade '+(i+1));b.setAttribute('aria-pressed',!i);activate(b,()=>{cancelGesture();choose(color);[...b.parentNode.children].forEach(el=>{el.classList.toggle('selected',el===b);el.setAttribute('aria-pressed',el===b);});sound('tap');});$(selector).append(b);});
+ colors.forEach((color,i)=>{const b=document.createElement('button');b.className='shade'+(!i?' selected':'');b.style.background=color;b.dataset.color=color;b.setAttribute('aria-label',prefix+' shade '+(i+1));b.setAttribute('aria-pressed',!i);activate(b,()=>{cancelGesture();choose(color);[...b.parentNode.children].forEach(el=>{el.classList.toggle('selected',el===b);el.setAttribute('aria-pressed',el===b);});sound('tap');});$(selector).append(b);});
 }
 shades('#makeupShades',['#d92d59','#ef4f7b','#b63b92','#ff7594','#9f2f59','#df56b1'],c=>state.shade=c,'Makeup');
 shades('#hairShades',['#513521','#211b1a','#854727','#b16f3f','#6a3954'],c=>{state.hair=c;renderAppearance();},'Hair');
@@ -188,10 +239,10 @@ function item(container,label,data,art) { const b=document.createElement('button
 [['Crown','crown','👑'],['Necklace','necklace','📿'],['Earrings','earrings','💎']].forEach(([label,key,art])=>item('#prettyStrip',label,{type:'accessory',key},art));
 [['Ice Cream','icecream','🍦'],['Popcorn','popcorn','🍿'],['Jalebi','jalebi','<svg viewBox="0 0 60 60"><path d="M45 45C5 65 0 10 30 8C63 6 66 55 31 52C4 49 13 17 32 17C52 17 52 42 32 43C19 42 20 27 32 26C42 26 41 36 32 36" stroke="#f58e19" stroke-width="7" fill="none" stroke-linecap="round"/></svg>'],['Lollipop','lollipop','🍭'],['Fries','fries','🍟']].forEach(([label,key,art])=>item('#foodStrip',label,{type:'food',key},art));
 activate($('#resetBtn'),()=>{
- cancelGesture();stopFeeding();Object.assign(state,{tool:'lipstick',shade:'#d92d59',hair:'#513521',hairStyle:0,dress:'#ff75a5',crown:false,necklace:false,earrings:false,rotation:0});
+ cancelGesture();stopFeeding();Object.assign(state,dollDefaults(dolls.find(d=>d.id===state.doll)),{tool:'lipstick',shade:'#d92d59',rotation:0});
  ['lipPaint','blushPaint','shadowPaint'].forEach(id=>$('#'+id).replaceChildren());
- ['#makeupShades','#hairShades','.makeup-row'].forEach(selector=>[...$(selector).children].forEach((el,i)=>{el.classList.toggle('selected',i===0);el.setAttribute('aria-pressed',i===0);}));
- renderAppearance();renderRotation();selectTab('makeup');message('Fresh start! 🌸');sound('tap');
+ ['#makeupShades','.makeup-row'].forEach(selector=>[...$(selector).children].forEach((el,i)=>{el.classList.toggle('selected',i===0);el.setAttribute('aria-pressed',i===0);}));
+ renderAppearance();renderRotation();selectTab('makeup');syncHairShades();saveLook();message('Fresh start! 🌸');sound('tap');
 });
 activate($('#readyBtn'),()=>{cancelGesture();stopFeeding();sound('celebrate');animateDoll();message('Bhargavi’s doll is ready! 💖');for(let i=0;i<16;i++) setTimeout(()=>sparkle(innerWidth*(.2+Math.random()*.6),innerHeight*(.15+Math.random()*.4),['✨','💖','🌸'][i%3]),i*45);});
 activate($('#soundBtn'),()=>{cancelGesture();state.sound=!state.sound;$('#soundBtn').textContent=state.sound?'🔊':'🔇';$('#soundBtn').setAttribute('aria-label',state.sound?'Sound on':'Sound off');$('#soundBtn').setAttribute('aria-pressed',state.sound);if(state.sound)sound('tap');});
@@ -205,7 +256,7 @@ addEventListener('beforeinstallprompt',e=>{e.preventDefault();installPrompt=e;})
 activate($('#installBtn'),install);activate($('#installBtnStart'),install);
 activate($('#closeInstallHelp'),()=>$('#installHelp').classList.add('hidden'));
 addEventListener('keydown',e=>{if(e.key==='Escape') {cancelGesture();stopFeeding();$('#installHelp').classList.add('hidden');}});
-renderAppearance();renderRotation();selectTab('makeup');$('.tool-card').classList.add('selected');$('.tool-card').setAttribute('aria-pressed','true');
+buildDollPicker();renderAppearance();renderRotation();selectTab('makeup');syncHairShades();$('.tool-card').classList.add('selected');$('.tool-card').setAttribute('aria-pressed','true');
 // Network-first shell, automatic worker activation, and a reload only at a safe idle point.
 if('serviceWorker' in navigator) {
  let initialController=!!navigator.serviceWorker.controller, reloadPending=false;

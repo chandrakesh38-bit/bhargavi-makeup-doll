@@ -4,6 +4,8 @@ A client-only touch game. No backend, account, advertisements, analytics, or ext
 
 ## Playing
 
+Choose Bhargavi, Tara, Meera, or Pari from the four picture cards. Each has a different face, skin tone and default hairstyle. Switching dolls preserves each doll’s makeup, dress, hairstyle and accessories for this play session. Reset clears only the selected doll. Reloading starts a fresh session.
+
 Select a makeup tool and shade, then rub her lips, cheeks, or eyelids. Drag clothes, hairstyles, accessories, and food onto their matching body areas. Hold a lollipop at the mouth for repeated licks. Drag the doll's body horizontally to spin. Selecting a makeup tool returns her to the front.
 
 ## Audit and fixes
@@ -20,7 +22,7 @@ Rotation crossfades front, right profile, back, and mirrored left profile. It is
 
 ## PWA
 
-192px and 512px opaque PNG icons, standalone manifest, native install prompt when offered, and Chrome-menu fallback. `bhargavi-shell-v9` caches the offline shell. Same-origin requests are network-first with no-store; offline requests fall back to cache. Updates delete only old Bhargavi caches, activate immediately, and reload an existing app at an idle point. The existing Vercel no-store headers for HTML, JS, CSS, manifest, and service worker are retained.
+192px and 512px opaque PNG icons, standalone manifest, native install prompt when offered, and Chrome-menu fallback. `bhargavi-shell-v10` caches the offline shell. Same-origin requests are network-first with no-store; offline requests fall back to cache. Updates delete only old Bhargavi caches, activate immediately, and reload an existing app at an idle point. The existing Vercel no-store headers for HTML, JS, CSS, manifest, and service worker are retained.
 
 ## Testing
 
@@ -34,6 +36,8 @@ python -m http.server 3000
 node tests/game.cjs http://127.0.0.1:3000
 node tests/game.cjs https://bhargavi-makeup-doll-v1.vercel.app
 ```
+
+The test also exercises makeup, dress, hair, accessories, feeding and rotation on all four dolls, restoration of separate makeovers, reset isolation and a second-finger doll switch during painting.
 
 The test runs desktop 1100x900 and mobile 360x800 with real Chromium CDP touch input. It covers the requested 20-step sequence, all item types, invalid drops, shade selection, repeated tabs, cancellation, second-finger interaction, rotation followed by painting, reset, sound controls, keyboard activation, install fallback, Chrome installability errors, manifest/cache contents, offline reload, console errors, and horizontal overflow.
 

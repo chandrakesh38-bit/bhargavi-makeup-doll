@@ -5,10 +5,10 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#ff9ec5">
   <meta name="description" content="Bhargavi's interactive makeup and dress-up doll game">
-  <link rel="manifest" href="/manifest.webmanifest?v=9">
+  <link rel="manifest" href="/manifest.webmanifest?v=10">
   <link rel="icon" href="/icon.svg" type="image/svg+xml">
   <title>Bhargavi's Makeup Doll</title>
-  <link rel="stylesheet" href="/styles.css?v=9">
+  <link rel="stylesheet" href="/styles.css?v=10">
 </head>
 <body>
 <div id="startScreen" class="start-screen">
@@ -18,7 +18,7 @@
     <div class="princess">👸</div>
     <button id="playBtn" class="play-btn">▶ PLAY</button>
     <button id="installBtnStart" class="install-btn">📲 Install App</button>
-    <p>Drag • Apply • Dress • Spin</p><small style="display:block;margin-top:6px;font-weight:900;color:#c45888">v9 • Touch & play</small>
+    <p>Drag • Apply • Dress • Spin</p><small style="display:block;margin-top:6px;font-weight:900;color:#c45888">v10 • Four doll friends</small>
   </div>
 </div>
 
@@ -28,6 +28,8 @@
     <div class="top-actions"><button id="installBtn" class="icon-btn" aria-label="Install App">📲</button><button id="soundBtn" class="icon-btn" aria-label="Sound on" aria-pressed="true">🔊</button></div>
   </header>
 
+  <nav id="dollPicker" class="doll-picker" aria-label="Choose your doll"></nav>
+
   <section class="stage" id="stage">
     <div class="hint" id="spinHint">💄 Choose a shade • rub her lips</div>
     <div class="doll-scene" id="dollScene">
@@ -36,10 +38,13 @@
           <svg id="frontSvg" viewBox="0 0 360 590" aria-label="Doll front view">
             <ellipse cx="180" cy="565" rx="108" ry="14" fill="#000" opacity=".08"/>
             <path id="hairBackF" d="M84 155Q72 60 180 48Q288 60 276 155L270 280Q225 310 180 302Q135 310 90 280Z" fill="#513521"/>
-            <ellipse cx="180" cy="172" rx="78" ry="92" fill="#ffd5bb"/>
+            <ellipse data-skin="fill" id="faceShape" cx="180" cy="172" rx="78" ry="92" fill="#ffd5bb"/>
             <path id="hairFrontF" d="M103 142Q111 69 180 67Q249 69 257 142Q225 115 199 108Q168 133 103 142Z" fill="#513521"/>
             <path id="eyeL" d="M131 164Q149 151 166 164" stroke="#4b3437" stroke-width="5" stroke-linecap="round" fill="none"/>
             <path id="eyeR" d="M194 164Q211 151 229 164" stroke="#4b3437" stroke-width="5" stroke-linecap="round" fill="none"/>
+            <g id="eyeDetails"></g>
+            <path id="nose" d="M179 178Q170 190 183 191" fill="none" stroke="#8f5b47" stroke-width="2" opacity=".35"/>
+            <g id="faceDetails"></g>
             <path id="shadowL" d="M130 153Q149 143 167 153" stroke="#f1a2c8" stroke-width="12" stroke-linecap="round" opacity="0" fill="none"/>
             <path id="shadowR" d="M193 153Q211 143 230 153" stroke="#f1a2c8" stroke-width="12" stroke-linecap="round" opacity="0" fill="none"/>
             <defs><clipPath id="cheekClip"><ellipse cx="128" cy="203" rx="22" ry="16"/><ellipse cx="232" cy="203" rx="22" ry="16"/></clipPath><clipPath id="eyeClip"><ellipse cx="149" cy="151" rx="22" ry="10"/><ellipse cx="211" cy="151" rx="22" ry="10"/></clipPath></defs><g id="shadowPaint" clip-path="url(#eyeClip)"></g><g id="blushPaint" clip-path="url(#cheekClip)"></g><ellipse id="blushL" cx="128" cy="203" rx="22" ry="13" fill="#ff8fa5" opacity="0"/>
@@ -51,14 +56,14 @@
             <path id="lips" d="M154 225Q180 208 206 225Q180 249 154 225Z" fill="#d98aa3"/>
             <g id="lipPaint" clip-path="url(#lipClip)"></g>
             <g id="eatingMouth" opacity="0"><ellipse cx="180" cy="228" rx="23" ry="16" fill="#75384b"/><ellipse cx="180" cy="236" rx="13" ry="5" fill="#ff98b8"/></g><path id="lipLine" d="M155 225Q180 233 205 225" stroke="#9b556e" stroke-width="1.5" fill="none" opacity=".55"/>
-            <path d="M148 270L212 270L219 316L141 316Z" fill="#ffd5bb"/>
+            <path data-skin="fill" d="M148 270L212 270L219 316L141 316Z" fill="#ffd5bb"/>
             <path id="dressF" d="M119 305Q180 270 241 305L267 500Q180 542 93 500Z" fill="#ff75a5"/>
             <path id="dressTopF" d="M121 305Q180 340 239 305L229 389Q180 410 131 389Z" fill="#ff5c99" opacity=".62"/>
-            <path d="M120 324Q91 349 79 427" stroke="#ffd5bb" stroke-width="26" stroke-linecap="round"/>
-            <path d="M240 324Q269 349 281 427" stroke="#ffd5bb" stroke-width="26" stroke-linecap="round"/>
-            <circle cx="77" cy="433" r="14" fill="#ffd5bb"/><circle cx="283" cy="433" r="14" fill="#ffd5bb"/>
-            <path d="M140 497L129 557" stroke="#ffd5bb" stroke-width="27" stroke-linecap="round"/>
-            <path d="M220 497L231 557" stroke="#ffd5bb" stroke-width="27" stroke-linecap="round"/>
+            <path data-skin="stroke" d="M120 324Q91 349 79 427" stroke="#ffd5bb" stroke-width="26" stroke-linecap="round"/>
+            <path data-skin="stroke" d="M240 324Q269 349 281 427" stroke="#ffd5bb" stroke-width="26" stroke-linecap="round"/>
+            <circle data-skin="fill" cx="77" cy="433" r="14" fill="#ffd5bb"/><circle data-skin="fill" cx="283" cy="433" r="14" fill="#ffd5bb"/>
+            <path data-skin="stroke" d="M140 497L129 557" stroke="#ffd5bb" stroke-width="27" stroke-linecap="round"/>
+            <path data-skin="stroke" d="M220 497L231 557" stroke="#ffd5bb" stroke-width="27" stroke-linecap="round"/>
             <path id="shoeLF" d="M106 551Q132 542 149 555L144 569L105 569Z" fill="#8b62c9"/>
             <path id="shoeRF" d="M211 555Q228 542 254 551L255 569L216 569Z" fill="#8b62c9"/>
             <g id="crownF" opacity="0"><path d="M135 86L150 43L174 71L193 39L216 70L239 45L247 89Z" fill="#ffd760" stroke="#f1ad2f" stroke-width="4"/></g>
@@ -70,13 +75,13 @@
           <svg viewBox="0 0 360 590" aria-label="Doll back view">
             <ellipse cx="180" cy="565" rx="108" ry="14" fill="#000" opacity=".08"/>
             <path id="hairBackB" d="M84 155Q72 60 180 48Q288 60 276 155L270 290Q225 325 180 318Q135 325 90 290Z" fill="#513521"/>
-            <path d="M145 267L215 267L222 318L138 318Z" fill="#ffd5bb"/>
+            <path data-skin="fill" d="M145 267L215 267L222 318L138 318Z" fill="#ffd5bb"/>
             <path id="dressB" d="M119 305Q180 277 241 305L267 500Q180 542 93 500Z" fill="#ff75a5"/>
-            <path d="M120 324Q91 349 79 427" stroke="#ffd5bb" stroke-width="26" stroke-linecap="round"/>
-            <path d="M240 324Q269 349 281 427" stroke="#ffd5bb" stroke-width="26" stroke-linecap="round"/>
-            <circle cx="77" cy="433" r="14" fill="#ffd5bb"/><circle cx="283" cy="433" r="14" fill="#ffd5bb"/>
-            <path d="M140 497L129 557" stroke="#ffd5bb" stroke-width="27" stroke-linecap="round"/>
-            <path d="M220 497L231 557" stroke="#ffd5bb" stroke-width="27" stroke-linecap="round"/>
+            <path data-skin="stroke" d="M120 324Q91 349 79 427" stroke="#ffd5bb" stroke-width="26" stroke-linecap="round"/>
+            <path data-skin="stroke" d="M240 324Q269 349 281 427" stroke="#ffd5bb" stroke-width="26" stroke-linecap="round"/>
+            <circle data-skin="fill" cx="77" cy="433" r="14" fill="#ffd5bb"/><circle data-skin="fill" cx="283" cy="433" r="14" fill="#ffd5bb"/>
+            <path data-skin="stroke" d="M140 497L129 557" stroke="#ffd5bb" stroke-width="27" stroke-linecap="round"/>
+            <path data-skin="stroke" d="M220 497L231 557" stroke="#ffd5bb" stroke-width="27" stroke-linecap="round"/>
             <path d="M106 551Q132 542 149 555L144 569L105 569Z" fill="#8b62c9"/>
             <path d="M211 555Q228 542 254 551L255 569L216 569Z" fill="#8b62c9"/>
           </svg>
@@ -84,13 +89,13 @@
 <div class="doll-face side"><svg id="sideSvg" viewBox="0 0 360 590" aria-label="Doll side view">
 <ellipse cx="180" cy="565" rx="75" ry="14" fill="#000" opacity=".08"/>
 <path id="sideHair" d="M125 165Q100 62 176 56Q231 64 227 157L219 290L124 290Z" fill="#513521"/>
-<path d="M174 90Q232 102 224 166L240 185L222 192Q229 238 194 259L168 270L155 149Z" fill="#ffd5bb"/>
+<path data-skin="fill" d="M174 90Q232 102 224 166L240 185L222 192Q229 238 194 259L168 270L155 149Z" fill="#ffd5bb"/>
 <path d="M202 163Q213 156 223 163" stroke="#4b3437" stroke-width="5" fill="none" stroke-linecap="round"/>
-<circle cx="162" cy="188" r="13" fill="#ffc4a8"/><path d="M219 225L227 225" stroke="#d98aa3" stroke-width="5" stroke-linecap="round"/>
-<path d="M167 257L200 257L206 309L159 309Z" fill="#ffd5bb"/>
+<circle data-skin="fill" cx="162" cy="188" r="13" fill="#ffc4a8"/><path d="M219 225L227 225" stroke="#d98aa3" stroke-width="5" stroke-linecap="round"/>
+<path data-skin="fill" d="M167 257L200 257L206 309L159 309Z" fill="#ffd5bb"/>
 <path id="sideDress" d="M145 305Q177 286 208 305L234 502Q180 526 126 502Z" fill="#ff75a5"/>
-<path d="M178 321L189 429" stroke="#ffd5bb" stroke-width="26" stroke-linecap="round"/>
-<path d="M166 499L169 556M192 499L193 556" stroke="#ffd5bb" stroke-width="23" stroke-linecap="round"/>
+<path data-skin="stroke" d="M178 321L189 429" stroke="#ffd5bb" stroke-width="26" stroke-linecap="round"/>
+<path data-skin="stroke" d="M166 499L169 556M192 499L193 556" stroke="#ffd5bb" stroke-width="23" stroke-linecap="round"/>
 <path d="M152 551L177 552L192 565L153 569M181 552L202 552L222 565L185 569" fill="#8b62c9"/>
 <path id="sideFringe" d="M130 151Q118 78 180 67Q220 76 227 126L189 114L169 178Z" fill="#513521"/>
 <g id="sideCrown" opacity="0"><path d="M142 85L149 44L165 65L181 42L199 70L218 49L221 86Z" fill="#ffd760" stroke="#f1ad2f" stroke-width="3"/></g>
@@ -149,6 +154,6 @@
 </main>
 
 <div id="installHelp" class="modal hidden"><div class="modal-card"><div>📲</div><h2>Install Game</h2><p id="installHelpText">Chrome menu ⋮ → Add to Home screen → Install</p><button id="closeInstallHelp">Got it 👍</button></div></div>
-<script src="/app.js?v=9"></script>
+<script src="/app.js?v=10"></script>
 </body>
 </html>

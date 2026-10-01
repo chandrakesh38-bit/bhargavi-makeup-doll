@@ -62,13 +62,36 @@ const fs=require('node:fs');
   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true,'No horizontal overflow');
   await page.waitForTimeout(1700);
   await page.screenshot({path:`/tmp/doll-${mobile?'mobile':'desktop'}.png`,fullPage:true});
+  // Four identities share the gesture controller but retain independent makeovers.
+  assert.equal(await page.locator('.doll-card').count(),4);
+  for(const [id,skin,defaultDress] of [['bhargavi','#ffd5bb','#ff75a5'],['tara','#c78a65','#62a9ec'],['meera','#915c44','#9a70dc'],['pari','#efbd87','#64c4b3']]) {
+   await click(`.doll-card[data-doll="${id}"]`);await check();assert.equal(await page.locator('#doll3d').getAttribute('data-doll'),id);
+   assert.equal(await page.locator('#faceShape').getAttribute('fill'),skin);assert.equal(await page.locator('#sideSvg [data-skin]').first().getAttribute('fill'),skin);
+   await click('#resetBtn');assert.equal(await page.locator('#dressF').getAttribute('fill'),defaultDress);
+   await click('[data-tool="lipstick"]');await rub(163,225,3);assert.equal(await page.locator('#lipPaint path').count(),1);
+   await click('[data-tool="blush"]');await rub(128,203);assert.ok(await page.locator('#blushPaint circle').count()>5);
+   await click('[data-tool="shadow"]');await rub(149,151);assert.ok(await page.locator('#shadowPaint circle').count()>5);
+   await click('[data-tab="dress"]');await drag('[data-item="purple"]',180,380);assert.equal(await page.locator('#dressF').getAttribute('fill'),'#9a70dc');
+   await click('[data-tab="hair"]');await drag('[data-item="long"]',180,100);await click('#hairShades button:nth-child(3)');assert.equal(await page.locator('#hairFrontF').getAttribute('fill'),'#854727');
+   await click('[data-tab="pretty"]');await drag('[data-item="crown"]',180,80);assert.equal(await page.locator('#crownF').getAttribute('opacity'),'1');
+   await click('[data-tab="food"]');await drag('[data-item="icecream"]',180,227);await drag('[data-item="lollipop"]',180,227,true);
+   await down(await point(160,380));await move(await point(250,380));await up();await check();
+  }
+  // Restoring a doll restores her paints, dress, hair and crown without changing any other doll.
+  await click('.doll-card[data-doll="bhargavi"]');assert.equal(await page.locator('#lipPaint path').count(),1);assert.equal(await page.locator('#crownF').getAttribute('opacity'),'1');
+  await click('#resetBtn');assert.equal(await page.locator('#lipPaint path').count(),0);
+  await click('.doll-card[data-doll="tara"]');assert.equal(await page.locator('#lipPaint path').count(),1);assert.equal(await page.locator('#crownF').getAttribute('opacity'),'1');
+  await tabs();await click('.doll-card[data-doll="bhargavi"]');await click('#resetBtn');
+  // A second-finger doll switch cancels a captured gesture immediately.
+  if(mobile) {await down(await point(165,225));const held=await point(165,225),card=await page.locator('.doll-card[data-doll="pari"]').boundingBox();await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{...held,id:0},{x:card.x+card.width/2,y:card.y+card.height/2,id:1}]});await cdp.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[{...held,id:0}]});await cdp.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});await check();assert.equal(await page.locator('#doll3d').getAttribute('data-doll'),'pari');await tabs();}
+  await click('.doll-card[data-doll="bhargavi"]');await click('#resetBtn');
   await page.evaluate(()=>navigator.serviceWorker.ready);await page.waitForTimeout(500);
   const installability=await cdp.send('Page.getInstallabilityErrors');assert.deepEqual(installability.installabilityErrors,[]);
   const manifest=await page.evaluate(async()=>await(await fetch('/manifest.webmanifest')).json());assert.equal(manifest.display,'standalone');assert.deepEqual(manifest.icons.map(i=>i.sizes),['192x192','512x512']);
-  const cache=await page.evaluate(async()=>{const keys=await caches.keys();const c=await caches.open('bhargavi-shell-v9');return{keys,urls:(await c.keys()).map(r=>new URL(r.url).pathname)};});assert.ok(cache.urls.includes('/app.js'));assert.ok(cache.urls.includes('/styles.css'));
+  const cache=await page.evaluate(async()=>{const keys=await caches.keys();const c=await caches.open('bhargavi-shell-v10');return{keys,urls:(await c.keys()).map(r=>new URL(r.url).pathname)};});assert.ok(cache.urls.includes('/app.js'));assert.ok(cache.urls.includes('/styles.css'));
   await context.setOffline(true);await page.reload();await click('#playBtn');await tabs();await rub(180,225);assert.equal(await page.locator('#lipPaint path').count(),1);await context.setOffline(false);
   assert.deepEqual(errors,[]);
-  results.push({profile:mobile?'360x800 Chromium touch emulation':'1100x900 desktop',regression:'20-step PASS',allItems:'PASS',invalidDrops:'PASS',cancelAndTabRecovery:'PASS',soundControls:'PASS',offlineShell:'PASS',installability:installability.installabilityErrors,consoleErrors:errors,horizontalOverflow:false});
+  results.push({profile:mobile?'360x800 Chromium touch emulation':'1100x900 desktop',regression:'20-step PASS',fourDolls:'All gameplay PASS',independentMakeovers:'PASS',allItems:'PASS',invalidDrops:'PASS',cancelAndTabRecovery:'PASS',soundControls:'PASS',offlineShell:'PASS',installability:installability.installabilityErrors,consoleErrors:errors,horizontalOverflow:false});
   await browser.close();
  }
  console.log(JSON.stringify({url,results},null,2));
