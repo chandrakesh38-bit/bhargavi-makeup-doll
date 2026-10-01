@@ -44,8 +44,9 @@
             <path id="shadowR" d="M193 153Q211 143 230 153" stroke="#f1a2c8" stroke-width="12" stroke-linecap="round" opacity="0" fill="none"/>
             <ellipse id="blushL" cx="128" cy="203" rx="22" ry="13" fill="#ff8fa5" opacity="0"/>
             <ellipse id="blushR" cx="232" cy="203" rx="22" ry="13" fill="#ff8fa5" opacity="0"/>
+            <path id="mouthInner" d="M158 226Q180 218 202 226Q180 239 158 226Z" fill="#7c3048" opacity="0"/>
             <path id="lips" d="M154 225Q180 208 206 225Q180 249 154 225Z" fill="#d98aa3"/>
-            <path d="M155 225Q180 233 205 225" stroke="#9b556e" stroke-width="1.5" fill="none" opacity=".55"/>
+            <path id="lipLine" d="M155 225Q180 233 205 225" stroke="#9b556e" stroke-width="1.5" fill="none" opacity=".55"/>
             <path d="M148 270L212 270L219 316L141 316Z" fill="#ffd5bb"/>
             <path id="dressF" d="M119 305Q180 270 241 305L267 500Q180 542 93 500Z" fill="#ff75a5"/>
             <path id="dressTopF" d="M121 305Q180 340 239 305L229 389Q180 410 131 389Z" fill="#ff5c99" opacity=".62"/>
@@ -88,6 +89,7 @@
       <button class="tab" data-tab="dress">👗<span>Dress</span></button>
       <button class="tab" data-tab="hair">💇‍♀️<span>Hair</span></button>
       <button class="tab" data-tab="pretty">👑<span>Pretty</span></button>
+      <button class="tab" data-tab="food">🍦<span>Food</span></button>
     </nav>
 
     <div class="panel active" id="panel-makeup">
@@ -115,6 +117,12 @@
     <div class="panel" id="panel-pretty">
       <div class="section-title">Drag accessories to the correct place ✨</div>
       <div class="item-strip" id="prettyStrip"></div>
+    </div>
+
+    <div class="panel" id="panel-food">
+      <div class="section-title">Drag food to her mouth 😋</div>
+      <div class="item-strip food-strip" id="foodStrip"></div>
+      <div class="food-note">Hold lollipop near her mouth for little licks 🍭</div>
     </div>
 
     <div class="actions"><button id="resetBtn">↩ Reset</button><button id="readyBtn">✨ Doll Ready!</button></div>
