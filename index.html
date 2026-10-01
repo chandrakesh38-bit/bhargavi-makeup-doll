@@ -2,13 +2,13 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#ff9ec5">
   <meta name="description" content="Bhargavi's interactive makeup and dress-up doll game">
-  <link rel="manifest" href="/manifest.webmanifest?v=8">
+  <link rel="manifest" href="/manifest.webmanifest?v=9">
   <link rel="icon" href="/icon.svg" type="image/svg+xml">
   <title>Bhargavi's Makeup Doll</title>
-  <link rel="stylesheet" href="/styles.css?v=8">
+  <link rel="stylesheet" href="/styles.css?v=9">
 </head>
 <body>
 <div id="startScreen" class="start-screen">
@@ -16,20 +16,20 @@
     <div class="spark-title">✨ 💖 ✨</div>
     <h1>Bhargavi's<br><span>Makeup Doll</span></h1>
     <div class="princess">👸</div>
-    <button id="playBtn" class="play-btn" onclick="document.getElementById('startScreen').style.display='none'">▶ PLAY</button>
-    <button id="installBtnStart" class="install-btn" onclick="window.__installFallback&&window.__installFallback()">📲 Install App</button>
-    <p>Drag • Apply • Dress • Spin</p><small style="display:block;margin-top:6px;font-weight:900;color:#c45888">V8</small>
+    <button id="playBtn" class="play-btn">▶ PLAY</button>
+    <button id="installBtnStart" class="install-btn">📲 Install App</button>
+    <p>Drag • Apply • Dress • Spin</p><small style="display:block;margin-top:6px;font-weight:900;color:#c45888">v9 • Touch & play</small>
   </div>
 </div>
 
-<main class="app">
+<main class="app" inert>
   <header class="topbar">
     <div><small>✨ BHARGAVI'S</small><h1>Makeup Doll</h1></div>
-    <div class="top-actions"><button id="installBtn" class="icon-btn">📲</button><button id="soundBtn" class="icon-btn">🔊</button></div>
+    <div class="top-actions"><button id="installBtn" class="icon-btn" aria-label="Install App">📲</button><button id="soundBtn" class="icon-btn" aria-label="Sound on" aria-pressed="true">🔊</button></div>
   </header>
 
   <section class="stage" id="stage">
-    <div class="hint" id="spinHint">↔ Hold doll & drag to rotate 360°</div>
+    <div class="hint" id="spinHint">💄 Choose a shade • rub her lips</div>
     <div class="doll-scene" id="dollScene">
       <div class="doll-3d" id="doll3d">
         <div class="doll-face front">
@@ -42,15 +42,15 @@
             <path id="eyeR" d="M194 164Q211 151 229 164" stroke="#4b3437" stroke-width="5" stroke-linecap="round" fill="none"/>
             <path id="shadowL" d="M130 153Q149 143 167 153" stroke="#f1a2c8" stroke-width="12" stroke-linecap="round" opacity="0" fill="none"/>
             <path id="shadowR" d="M193 153Q211 143 230 153" stroke="#f1a2c8" stroke-width="12" stroke-linecap="round" opacity="0" fill="none"/>
-            <ellipse id="blushL" cx="128" cy="203" rx="22" ry="13" fill="#ff8fa5" opacity="0"/>
+            <defs><clipPath id="cheekClip"><ellipse cx="128" cy="203" rx="22" ry="16"/><ellipse cx="232" cy="203" rx="22" ry="16"/></clipPath><clipPath id="eyeClip"><ellipse cx="149" cy="151" rx="22" ry="10"/><ellipse cx="211" cy="151" rx="22" ry="10"/></clipPath></defs><g id="shadowPaint" clip-path="url(#eyeClip)"></g><g id="blushPaint" clip-path="url(#cheekClip)"></g><ellipse id="blushL" cx="128" cy="203" rx="22" ry="13" fill="#ff8fa5" opacity="0"/>
             <ellipse id="blushR" cx="232" cy="203" rx="22" ry="13" fill="#ff8fa5" opacity="0"/>
             <defs>
               <clipPath id="lipClip"><path d="M154 225Q180 208 206 225Q180 249 154 225Z"/></clipPath>
             </defs>
-            <path id="mouthInner" d="M158 226Q180 218 202 226Q180 239 158 226Z" fill="#7c3048" opacity="0"/>
+
             <path id="lips" d="M154 225Q180 208 206 225Q180 249 154 225Z" fill="#d98aa3"/>
             <g id="lipPaint" clip-path="url(#lipClip)"></g>
-            <path id="lipLine" d="M155 225Q180 233 205 225" stroke="#9b556e" stroke-width="1.5" fill="none" opacity=".55"/>
+            <g id="eatingMouth" opacity="0"><ellipse cx="180" cy="228" rx="23" ry="16" fill="#75384b"/><ellipse cx="180" cy="236" rx="13" ry="5" fill="#ff98b8"/></g><path id="lipLine" d="M155 225Q180 233 205 225" stroke="#9b556e" stroke-width="1.5" fill="none" opacity=".55"/>
             <path d="M148 270L212 270L219 316L141 316Z" fill="#ffd5bb"/>
             <path id="dressF" d="M119 305Q180 270 241 305L267 500Q180 542 93 500Z" fill="#ff75a5"/>
             <path id="dressTopF" d="M121 305Q180 340 239 305L229 389Q180 410 131 389Z" fill="#ff5c99" opacity=".62"/>
@@ -81,14 +81,29 @@
             <path d="M211 555Q228 542 254 551L255 569L216 569Z" fill="#8b62c9"/>
           </svg>
         </div>
-      </div>
+<div class="doll-face side"><svg id="sideSvg" viewBox="0 0 360 590" aria-label="Doll side view">
+<ellipse cx="180" cy="565" rx="75" ry="14" fill="#000" opacity=".08"/>
+<path id="sideHair" d="M125 165Q100 62 176 56Q231 64 227 157L219 290L124 290Z" fill="#513521"/>
+<path d="M174 90Q232 102 224 166L240 185L222 192Q229 238 194 259L168 270L155 149Z" fill="#ffd5bb"/>
+<path d="M202 163Q213 156 223 163" stroke="#4b3437" stroke-width="5" fill="none" stroke-linecap="round"/>
+<circle cx="162" cy="188" r="13" fill="#ffc4a8"/><path d="M219 225L227 225" stroke="#d98aa3" stroke-width="5" stroke-linecap="round"/>
+<path d="M167 257L200 257L206 309L159 309Z" fill="#ffd5bb"/>
+<path id="sideDress" d="M145 305Q177 286 208 305L234 502Q180 526 126 502Z" fill="#ff75a5"/>
+<path d="M178 321L189 429" stroke="#ffd5bb" stroke-width="26" stroke-linecap="round"/>
+<path d="M166 499L169 556M192 499L193 556" stroke="#ffd5bb" stroke-width="23" stroke-linecap="round"/>
+<path d="M152 551L177 552L192 565L153 569M181 552L202 552L222 565L185 569" fill="#8b62c9"/>
+<path id="sideFringe" d="M130 151Q118 78 180 67Q220 76 227 126L189 114L169 178Z" fill="#513521"/>
+<g id="sideCrown" opacity="0"><path d="M142 85L149 44L165 65L181 42L199 70L218 49L221 86Z" fill="#ffd760" stroke="#f1ad2f" stroke-width="3"/></g>
+<g id="sideNecklace" opacity="0"><path d="M191 292L204 318" stroke="#ffd85c" stroke-width="6"/></g>
+<g id="sideEarrings" opacity="0"><circle cx="162" cy="203" r="7" fill="#ffd85c"/></g>
+</svg></div>      </div>
     </div>
     <div id="dragGhost" class="drag-ghost hidden"></div>
-    <div id="dropMessage" class="drop-message">Drag it onto the doll ✨</div>
+    <div id="dropMessage" role="status" aria-live="polite" class="drop-message">Drag it onto the doll ✨</div>
   </section>
 
   <section class="controls">
-    <nav class="tabs">
+    <nav class="tabs" aria-label="Play categories">
       <button class="tab active" data-tab="makeup">💄<span>Makeup</span></button>
       <button class="tab" data-tab="dress">👗<span>Dress</span></button>
       <button class="tab" data-tab="hair">💇‍♀️<span>Hair</span></button>
@@ -98,7 +113,7 @@
 
     <div class="panel active" id="panel-makeup">
       <div class="makeup-row">
-        <button class="tool-card" data-drag-type="makeup" data-tool="lipstick"><span>💄</span><b>Lipstick</b><small>Drag to lips</small></button>
+        <button class="tool-card" data-drag-type="makeup" data-tool="lipstick"><span>💄</span><b>Lipstick</b><small>Rub her lips</small></button>
         <button class="tool-card" data-drag-type="makeup" data-tool="blush"><span>🖌️</span><b>Blush Brush</b><small>Brush cheeks</small></button>
         <button class="tool-card" data-drag-type="makeup" data-tool="shadow"><span>🪄</span><b>Eye Brush</b><small>Brush eyes</small></button>
       </div>
@@ -134,12 +149,6 @@
 </main>
 
 <div id="installHelp" class="modal hidden"><div class="modal-card"><div>📲</div><h2>Install Game</h2><p id="installHelpText">Chrome menu ⋮ → Add to Home screen → Install</p><button id="closeInstallHelp">Got it 👍</button></div></div>
-<script>
-window.__installFallback=function(){
-  var m=document.getElementById('installHelp');
-  if(m) m.classList.remove('hidden');
-};
-</script>
-<script src="/app.js?v=8"></script>
+<script src="/app.js?v=9"></script>
 </body>
 </html>

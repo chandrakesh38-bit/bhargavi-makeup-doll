@@ -1,9 +1,22 @@
-const CACHE='bhargavi-doll-v7';
-self.addEventListener('install',e=>self.skipWaiting());
-self.addEventListener('activate',e=>e.waitUntil(
-  caches.keys().then(keys=>Promise.all(keys.map(k=>caches.delete(k)))).then(()=>self.clients.claim())
-));
-self.addEventListener('fetch',e=>{
-  if(e.request.method!=='GET') return;
-  e.respondWith(fetch(e.request,{cache:'no-store'}).catch(()=>caches.match(e.request)));
+'use strict';
+const CACHE='bhargavi-shell-v9';
+const SHELL=['/','/index.html','/app.js?v=9','/styles.css?v=9','/manifest.webmanifest?v=9','/icon.svg','/icon-192.png','/icon-512.png'];
+self.addEventListener('install',event=>event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(SHELL)).then(()=>self.skipWaiting())));
+self.addEventListener('activate',event=>event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(key=>key.startsWith('bhargavi')&&key!==CACHE).map(key=>caches.delete(key)))).then(()=>self.clients.claim())));
+self.addEventListener('fetch',event=>{
+ const request=event.request,url=new URL(request.url);
+ if(request.method!=='GET'||url.origin!==self.location.origin)return;
+ event.respondWith((async()=>{
+  const cache=await caches.open(CACHE);
+  try {
+   const response=await fetch(request,{cache:'no-store'});
+   if(response.ok) await cache.put(request,response.clone());
+   return response;
+  } catch {
+   const cached=await cache.match(request);
+   if(cached)return cached;
+   if(request.mode==='navigate')return (await cache.match('/'));
+   return Response.error();
+  }
+ })());
 });
