@@ -1,48 +1,38 @@
-const $=s=>document.querySelector(s);const $$=s=>[...document.querySelectorAll(s)];
-let soundOn=true,audioCtx,deferredPrompt=null;
-const state={lip:'#ec5579',blush:'#ff91a8',eye:'#f4a0c8',dress:'#ff6f9e',hair:'#49311f',hairStyle:0,crown:false,necklace:false,earrings:false};
-const defaults={...state};
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+let audioCtx,soundOn=true,deferredPrompt=null,selectedTool='lipstick',selectedShade='#d92d59',drag=null,rotation=0,spinStartX=0,spinStartRot=0,spinning=false;
+const state={lip:'#d98aa3',blush:'#ff8fa5',shadow:'#f1a2c8',blushOpacity:0,shadowOpacity:0,dress:'#ff75a5',hair:'#513521',hairStyle:0,crown:false,necklace:false,earrings:false};
+const defaults=JSON.parse(JSON.stringify(state));
 function audio(){if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();if(audioCtx.state==='suspended')audioCtx.resume();return audioCtx}
-function tone(freq=440,dur=.09,type='sine',gain=.045,slide=0){if(!soundOn)return;const c=audio(),o=c.createOscillator(),g=c.createGain();o.type=type;o.frequency.setValueAtTime(freq,c.currentTime);if(slide)o.frequency.linearRampToValueAtTime(freq+slide,c.currentTime+dur);g.gain.setValueAtTime(gain,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+dur);o.connect(g).connect(c.destination);o.start();o.stop(c.currentTime+dur)}
-function sfx(kind){if(kind==='lip'){tone(520,.06,'sine',.035,90);setTimeout(()=>tone(620,.05,'sine',.025),55)}else if(kind==='brush'){tone(170,.10,'triangle',.025,95)}else if(kind==='dress'){tone(560,.08,'sine',.035,180);setTimeout(()=>tone(820,.09,'sine',.03,80),70)}else if(kind==='ting'){tone(980,.12,'sine',.035,180)}else if(kind==='reset'){tone(330,.12,'triangle',.025,-100)}else if(kind==='ready'){[523,659,784,1046].forEach((n,i)=>setTimeout(()=>tone(n,.17,'sine',.045,50),i*95))}else if(kind==='play'){[392,523,659].forEach((n,i)=>setTimeout(()=>tone(n,.15,'sine',.04,40),i*75))}}
-function pop(){const d=$('#dollWrap');d.classList.remove('pop');void d.offsetWidth;d.classList.add('pop')}
-function sparkle(n=7){for(let i=0;i<n;i++){const e=document.createElement('span');e.className='spark';e.textContent=['✨','💖','⭐','🌸'][Math.floor(Math.random()*4)];e.style.left=(15+Math.random()*70)+'%';e.style.top=(35+Math.random()*45)+'%';e.style.animationDelay=(Math.random()*180)+'ms';$('#sparkles').appendChild(e);setTimeout(()=>e.remove(),1200)}}
-function swatches(id,colors,key,sound){const box=$(id);colors.forEach(c=>{const b=document.createElement('button');b.className='swatch';b.style.background=c;b.setAttribute('aria-label',`${key} color`);b.onclick=()=>{state[key]=c;apply();mark(b,box);sfx(sound);pop()};box.appendChild(b)})}
-function mark(el,parent){[...parent.children].forEach(x=>x.classList.remove('selected'));el.classList.add('selected')}
-function apply(){
-  $('#lips').setAttribute('fill',state.lip);$('#blushL').setAttribute('fill',state.blush);$('#blushR').setAttribute('fill',state.blush);
-  $('#eyeShadowL').setAttribute('stroke',state.eye);$('#eyeShadowR').setAttribute('stroke',state.eye);
-  $('#dress').setAttribute('fill',state.dress);$('#dressTop').setAttribute('fill',state.dress);
-  $('#backHair').setAttribute('fill',state.hair);$('#frontHair').setAttribute('fill',state.hair);
-  $('#crown').setAttribute('opacity',state.crown?1:0);$('#necklace').setAttribute('opacity',state.necklace?1:0);$('#earrings').setAttribute('opacity',state.earrings?1:0);setHairStyle(state.hairStyle)
-}
-function setHairStyle(n){const f=$('#frontHair'),b=$('#backHair');if(n===0){f.setAttribute('d','M104 135 Q110 78 170 78 Q226 80 236 136 Q210 116 188 110 Q160 130 104 135Z');b.setAttribute('d','M87 155 Q76 72 170 58 Q264 72 253 155 L250 257 Q215 285 170 280 Q125 285 90 257Z')}if(n===1){f.setAttribute('d','M103 140 Q106 78 170 76 Q235 82 237 143 Q204 106 170 108 Q134 107 103 140Z');b.setAttribute('d','M92 153 Q82 85 170 61 Q258 86 248 153 L235 235 Q209 252 170 252 Q131 252 105 235Z')}if(n===2){f.setAttribute('d','M105 138 Q112 80 170 78 Q229 80 235 138 Q210 103 173 111 Q150 91 105 138Z');b.setAttribute('d','M89 157 Q79 72 170 57 Q261 72 251 157 L266 302 Q220 325 170 309 Q120 325 74 302Z')}}
-function choices(id,items,onPick){const box=$(id);items.forEach((it,i)=>{const b=document.createElement('button');b.className='choice';b.innerHTML=it.label;b.onclick=()=>{mark(b,box);onPick(it,i);pop()};box.appendChild(b)})}
-function showInstallHelp(){
-  const isIos=/iphone|ipad|ipod/i.test(navigator.userAgent);
-  $('#installHelpText').innerHTML=isIos?'Safari Share button → <b>Add to Home Screen</b>':'Chrome menu ⋮ → <b>Add to Home screen</b> → Install';
-  $('#installHelp').classList.remove('hidden');
-}
-async function installApp(){
-  if(window.matchMedia('(display-mode: standalone)').matches){alert('App is already installed 👍');return}
-  if(deferredPrompt){deferredPrompt.prompt();await deferredPrompt.userChoice;deferredPrompt=null;return}
-  showInstallHelp();
-}
-window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e});
-window.addEventListener('appinstalled',()=>{deferredPrompt=null});
-
-swatches('#lipColors',['#ec5579','#d72f52','#b43e88','#ff7b94','#9d315a','#e956ae'],'lip','lip');
-swatches('#blushColors',['#ff91a8','#f79ac0','#f48f86','#df7baa','#f6b0aa'],'blush','brush');
-swatches('#eyeColors',['#f4a0c8','#b998e8','#88bff0','#b99b6b','#8dc9aa'],'eye','brush');
-swatches('#hairColors',['#49311f','#201b1a','#8a4e2c','#b07143','#693b54'],'hair','dress');
-choices('#dressOptions',[{label:'🌸<br>Pink',c:'#ff6f9e'},{label:'💜<br>Purple',c:'#9a70dc'},{label:'🌊<br>Blue',c:'#62a9ec'},{label:'🌼<br>Yellow',c:'#f1bd54'},{label:'🍓<br>Red',c:'#e75468'}],it=>{state.dress=it.c;apply();sfx('dress');sparkle(4)});
-choices('#hairStyles',[{label:'🎀<br>Classic'},{label:'🌷<br>Bob'},{label:'🦋<br>Long'}],(_,i)=>{state.hairStyle=i;apply();sfx('dress')});
-choices('#accessoryOptions',[{label:'👑<br>Crown',k:'crown'},{label:'📿<br>Necklace',k:'necklace'},{label:'✨<br>Earrings',k:'earrings'}],it=>{state[it.k]=!state[it.k];apply();sfx('ting');sparkle(5)});
-$$('.tab').forEach(t=>t.onclick=()=>{$$('.tab').forEach(x=>x.classList.remove('active'));t.classList.add('active');$$('.panel').forEach(x=>x.classList.remove('active'));$('#panel-'+t.dataset.tab).classList.add('active');sfx('ting')});
-$('#soundBtn').onclick=()=>{soundOn=!soundOn;$('#soundBtn').textContent=soundOn?'🔊':'🔇';$('#soundBtn').setAttribute('aria-label',soundOn?'Sound on':'Sound off');if(soundOn)sfx('ting')};
-$('#resetBtn').onclick=()=>{Object.assign(state,defaults);apply();$$('.selected').forEach(x=>x.classList.remove('selected'));sfx('reset');pop()};
-$('#readyBtn').onclick=()=>{sfx('ready');sparkle(20);const d=$('#dollWrap'),b=$('#readyBubble');d.classList.remove('celebrate');void d.offsetWidth;d.classList.add('celebrate');b.classList.add('show');setTimeout(()=>b.classList.remove('show'),1900)};
-$('#playBtn').onclick=()=>{sfx('play');$('#startScreen').classList.add('hide');setTimeout(()=>$('#startScreen').style.display='none',380)};
-$('#installBtn').onclick=installApp;$('#installBtnStart').onclick=installApp;$('#closeInstallHelp').onclick=()=>$('#installHelp').classList.add('hidden');
-apply();
-if('serviceWorker' in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('/sw.js').catch(console.warn));
+function tone(f=440,d=.08,g=.03,slide=0){if(!soundOn)return;const c=audio(),o=c.createOscillator(),v=c.createGain();o.type='sine';o.frequency.setValueAtTime(f,c.currentTime);if(slide)o.frequency.linearRampToValueAtTime(f+slide,c.currentTime+d);v.gain.setValueAtTime(g,c.currentTime);v.gain.exponentialRampToValueAtTime(.001,c.currentTime+d);o.connect(v).connect(c.destination);o.start();o.stop(c.currentTime+d)}
+function sfx(k){if(k==='brush')tone(190,.08,.018,70);else if(k==='drop'){tone(550,.07,.035,160);setTimeout(()=>tone(820,.08,.025,60),65)}else if(k==='bad')tone(180,.12,.02,-50);else if(k==='ready')[523,659,784,1046].forEach((n,i)=>setTimeout(()=>tone(n,.15,.035,50),i*85));else tone(700,.07,.025,90)}
+function apply(){['hairBackF','hairFrontF','hairBackB'].forEach(id=>$('#'+id)?.setAttribute('fill',state.hair));$('#lips').setAttribute('fill',state.lip);$('#blushL').setAttribute('fill',state.blush);$('#blushR').setAttribute('fill',state.blush);$('#blushL').setAttribute('opacity',state.blushOpacity);$('#blushR').setAttribute('opacity',state.blushOpacity);$('#shadowL').setAttribute('stroke',state.shadow);$('#shadowR').setAttribute('stroke',state.shadow);$('#shadowL').setAttribute('opacity',state.shadowOpacity);$('#shadowR').setAttribute('opacity',state.shadowOpacity);$('#dressF').setAttribute('fill',state.dress);$('#dressTopF').setAttribute('fill',state.dress);$('#dressB').setAttribute('fill',state.dress);$('#crownF').setAttribute('opacity',state.crown?1:0);$('#necklaceF').setAttribute('opacity',state.necklace?1:0);$('#earringsF').setAttribute('opacity',state.earrings?1:0);setHair(state.hairStyle)}
+function setHair(n){const f=$('#hairFrontF'),b=$('#hairBackF'),bb=$('#hairBackB');if(n===0){f.setAttribute('d','M103 142Q111 69 180 67Q249 69 257 142Q225 115 199 108Q168 133 103 142Z');b.setAttribute('d','M84 155Q72 60 180 48Q288 60 276 155L270 280Q225 310 180 302Q135 310 90 280Z');bb.setAttribute('d','M84 155Q72 60 180 48Q288 60 276 155L270 290Q225 325 180 318Q135 325 90 290Z')}else if(n===1){f.setAttribute('d','M101 146Q111 75 180 72Q247 75 259 146Q226 111 180 116Q135 112 101 146Z');b.setAttribute('d','M92 157Q79 77 180 58Q281 77 268 157L252 250Q220 271 180 270Q140 271 108 250Z');bb.setAttribute('d','M92 157Q79 77 180 58Q281 77 268 157L252 255Q220 278 180 278Q140 278 108 255Z')}else{f.setAttribute('d','M103 142Q111 69 180 67Q249 69 257 142Q225 115 199 108Q168 133 103 142Z');b.setAttribute('d','M82 158Q70 58 180 47Q290 58 278 158L293 340Q236 366 180 348Q124 366 67 340Z');bb.setAttribute('d','M82 158Q70 58 180 47Q290 58 278 158L293 350Q236 379 180 361Q124 379 67 350Z')}}
+function rect(id){return $('#'+id).getBoundingClientRect()}function inside(x,y,r,p=0){return x>=r.left-p&&x<=r.right+p&&y>=r.top-p&&y<=r.bottom+p}
+function spark(x,y){const e=document.createElement('div');e.className='paint-spark';e.textContent='✨';e.style.left=x+'px';e.style.top=y+'px';document.body.appendChild(e);setTimeout(()=>e.remove(),560)}
+function msg(t){const m=$('#dropMessage');m.textContent=t;m.classList.add('show');clearTimeout(msg.t);msg.t=setTimeout(()=>m.classList.remove('show'),1000)}
+function toolEmoji(type,key){if(type==='makeup')return key==='lipstick'?'💄':key==='blush'?'🖌️':'🪄';if(type==='dress')return'👗';if(type==='hair')return'💇‍♀️';if(type==='pretty')return key==='crown'?'👑':key==='necklace'?'📿':'✨';return'✨'}
+function beginDrag(e,payload,source){e.preventDefault();e.stopPropagation();drag={...payload,source,painted:false,lastPaint:0};const g=$('#dragGhost');g.textContent=toolEmoji(payload.type,payload.key);g.className='drag-ghost'+(payload.type==='makeup'?' brush':'');moveGhost(e.clientX,e.clientY);source?.setPointerCapture?.(e.pointerId);source?.addEventListener('pointermove',onDragMove);source?.addEventListener('pointerup',onDragEnd,{once:true});source?.addEventListener('pointercancel',onDragEnd,{once:true});msg(payload.type==='makeup'?'Brush on the correct part ✨':'Drag it onto the doll ✨')}
+function moveGhost(x,y){const g=$('#dragGhost');g.style.left=x+'px';g.style.top=y+'px'}
+function onDragMove(e){if(!drag)return;moveGhost(e.clientX,e.clientY);if(drag.type==='makeup')paintAt(e.clientX,e.clientY)}
+function paintAt(x,y){const now=Date.now();if(now-drag.lastPaint<65)return;drag.lastPaint=now;let ok=false;if(drag.key==='lipstick'&&inside(x,y,rect('lips'),18)){state.lip=selectedShade;ok=true}else if(drag.key==='blush'&&(inside(x,y,rect('blushL'),18)||inside(x,y,rect('blushR'),18))){state.blush=selectedShade;state.blushOpacity=Math.min(.72,state.blushOpacity+.14);ok=true}else if(drag.key==='shadow'&&(inside(x,y,rect('shadowL'),18)||inside(x,y,rect('shadowR'),18))){state.shadow=selectedShade;state.shadowOpacity=Math.min(.88,state.shadowOpacity+.18);ok=true}if(ok){drag.painted=true;apply();spark(x,y);sfx('brush')}}
+function dollZone(){return $('#dollScene').getBoundingClientRect()}
+function onDragEnd(e){if(!drag)return;const d=drag;d.source?.removeEventListener('pointermove',onDragMove);$('#dragGhost').className='drag-ghost hidden';if(d.type==='makeup'){paintAt(e.clientX,e.clientY);if(d.painted)msg('Beautiful! ✨');else{msg('Try on the face 💖');sfx('bad')}}else{const z=dollZone();if(!inside(e.clientX,e.clientY,z,-10)){msg('Drop it on the doll 💖');sfx('bad')}else{if(d.type==='dress'){state.dress=d.color;msg('Dress changed! 👗')}if(d.type==='hair'){state.hairStyle=d.style;msg('New hairstyle! 💇‍♀️')}if(d.type==='pretty'){const hr=rect('hairFrontF'),nr=rect('necklaceF'),er=rect('earringsF');let targetOk=d.key==='crown'?e.clientY<z.top+z.height*.42:d.key==='necklace'?e.clientY>z.top+z.height*.35&&e.clientY<z.top+z.height*.65:true;if(targetOk){state[d.key]=true;msg('So pretty! ✨')}else{msg('Try a better spot ✨');sfx('bad');drag=null;return}}apply();sfx('drop');spark(e.clientX,e.clientY)}}drag=null}
+function buildShades(id,colors,onPick){const box=$(id);colors.forEach((c,i)=>{const b=document.createElement('button');b.className='shade'+(i===0?' selected':'');b.style.background=c;b.addEventListener('click',()=>{[...box.children].forEach(x=>x.classList.remove('selected'));b.classList.add('selected');onPick(c);sfx('tap')});box.appendChild(b)})}
+function dragCard(label,type,data,html){const b=document.createElement('button');b.className='drag-item';b.innerHTML=html||label;b.addEventListener('pointerdown',e=>beginDrag(e,{type,...data},b));return b}
+buildShades('#makeupShades',['#d92d59','#ef4f7b','#b63b92','#ff7594','#9f2f59','#df56b1'],c=>selectedShade=c);
+buildShades('#hairShades',['#513521','#211b1a','#854727','#b16f3f','#6a3954'],c=>{state.hair=c;apply()});
+[['Rose','#ff75a5'],['Purple','#9a70dc'],['Blue','#62a9ec'],['Sun','#f1bd54'],['Red','#e75468']].forEach(([n,c])=>$('#dressStrip').appendChild(dragCard(n,'dress',{color:c},`<div class="mini-dress" style="background:${c}"></div><b>${n}</b>`)));
+[['Classic',0,'🎀'],['Bob',1,'🌷'],['Long',2,'🦋']].forEach(([n,s,e])=>$('#hairStrip').appendChild(dragCard(n,'hair',{style:s},`${e}<b>${n}</b>`)));
+[['Crown','crown','👑'],['Necklace','necklace','📿'],['Earrings','earrings','✨']].forEach(([n,k,e])=>$('#prettyStrip').appendChild(dragCard(n,'pretty',{key:k},`${e}<b>${n}</b>`)));
+$$('.tool-card').forEach(b=>b.addEventListener('pointerdown',e=>{selectedTool=b.dataset.tool;$$('.tool-card').forEach(x=>x.classList.remove('selected'));b.classList.add('selected');beginDrag(e,{type:'makeup',key:selectedTool},b)}));
+$$('.tabs .tab').forEach(t=>t.addEventListener('click',()=>{$$('.tab').forEach(x=>x.classList.remove('active'));t.classList.add('active');$$('.panel').forEach(x=>x.classList.remove('active'));$('#panel-'+t.dataset.tab).classList.add('active');sfx('tap')}));
+$('#dollScene').addEventListener('pointerdown',e=>{if(drag)return;spinning=true;spinStartX=e.clientX;spinStartRot=rotation;$('#dollScene').setPointerCapture?.(e.pointerId)});
+$('#dollScene').addEventListener('pointermove',e=>{if(!spinning||drag)return;rotation=spinStartRot+(e.clientX-spinStartX)*.75;$('#doll3d').style.transform=`rotateY(${rotation}deg)`;$('#spinHint').style.opacity=.35});
+$('#dollScene').addEventListener('pointerup',()=>{spinning=false;$('#spinHint').style.opacity=1;sfx('tap')});$('#dollScene').addEventListener('pointercancel',()=>spinning=false);
+$('#resetBtn').onclick=()=>{Object.assign(state,JSON.parse(JSON.stringify(defaults)));selectedShade='#d92d59';rotation=0;$('#doll3d').style.transform='rotateY(0deg)';apply();msg('Reset ✨');sfx('tap')};
+$('#readyBtn').onclick=()=>{sfx('ready');msg('Bhargavi’s doll is ready! 💖');for(let i=0;i<18;i++)setTimeout(()=>spark(innerWidth*(.2+Math.random()*.6),innerHeight*(.15+Math.random()*.45)),i*45)};
+$('#soundBtn').onclick=()=>{soundOn=!soundOn;$('#soundBtn').textContent=soundOn?'🔊':'🔇';if(soundOn)sfx('tap')};
+$('#playBtn').onclick=()=>{sfx('ready');$('#startScreen').classList.add('hide');setTimeout(()=>$('#startScreen').style.display='none',360)};
+async function installApp(){if(matchMedia('(display-mode: standalone)').matches){msg('Already installed 👍');return}if(deferredPrompt){deferredPrompt.prompt();await deferredPrompt.userChoice;deferredPrompt=null}else{$('#installHelp').classList.remove('hidden')}}
+addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e});$('#installBtn').onclick=installApp;$('#installBtnStart').onclick=installApp;$('#closeInstallHelp').onclick=()=>$('#installHelp').classList.add('hidden');
+apply();$('.tool-card').classList.add('selected');if('serviceWorker'in navigator)addEventListener('load',()=>navigator.serviceWorker.register('/sw.js').catch(()=>{}));
